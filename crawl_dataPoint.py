@@ -115,10 +115,15 @@ Data.to_excel("FullDATA.xlsx", index = True)
 
 ##remove the courses that do not have accumulated points
 Accum = Data[Data['Tích lũy'] == '*']
+Accum.to_excel("AccumDATA.xlsx", index = True)
+
+##remove conditional courese
+Final = Accum[Accum['Điều kiện'] != "x"] 
+Final.index = np.arange(1,Final.shape[0]+1,1)
 
 ##get items data to accumulate GPA
-credits = list(Accum['Tín chỉ'])
-scores = list(Accum['Điểm chữ'])
+credits = list(Final['Tín chỉ'])
+scores = list(Final['Điểm chữ'])
     ##convert letter score to score
 for idx, sco in enumerate(scores):
     if sco =='A':
@@ -138,22 +143,21 @@ for idx, sco in enumerate(scores):
 Exchane = scores
 
 ##insert Exchane column into Accum and set the order number for rows
-Accum.insert(loc=6, column='Exchane_scores', value=Exchane)
-Accum.index = np.arange(1,Accum.shape[0]+1,1)
+Final.insert(loc=6, column='Điểm quy đổi', value=Exchane)
+Final.index = np.arange(1,Final.shape[0]+1,1)
 
 ##save accumulated data as csv file
-Accum.to_excel("AccumScoreDATA.xlsx", index = True)
+Final.to_excel("DATA.xlsx", index = True)
 
 ##caculate GPA
 numerator = 0
 denominator = 0
 for i in range(len(credits)):
-    numerator += int(credits[i])*Exchane[i]
-    denominator += int(credits[i])
+    numerator += float(credits[i])*Exchane[i]
+    denominator += float(credits[i])
 
 GPA = numerator/denominator
-print(denominator)
-print(GPA)
+print('GPA = ', GPA)
 
 
 
